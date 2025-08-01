@@ -37,7 +37,6 @@ public class Fornecedor implements Serializable {
 
     @OneToMany(mappedBy = "conFornecedor", cascade = CascadeType.ALL)
     private List<Contato> contatos = new ArrayList<>();
-
     public Fornecedor() {}
 
     public Fornecedor(Long forId, String forNomeFantasia, String forCnpj, String forRazaoSocial) {

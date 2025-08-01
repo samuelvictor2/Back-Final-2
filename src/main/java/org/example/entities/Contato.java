@@ -29,13 +29,13 @@ public class Contato implements Serializable {
     private Fornecedor conFornecedor;
 
     @NotBlank(message = "celular é obrigatório")
-    @Size(max = 14, message = "celular deve ter no máximo 14 caracteres")
-    @Column(name = "CON_CELULAR", length = 14)
+    @Size(max = 17, message = "celular deve ter no máximo 14 caracteres")
+    @Column(name = "CON_CELULAR", length = 17)
     private String conCelular;
 
     @NotBlank(message = "telefone comercial é obrigatório")
-    @Size(max = 14, message = "telefone comercial deve ter no máximo 14 caracteres")
-    @Column(name = "CON_TELEFONE_COMERCIAL", length = 14)
+    @Size(max = 17, message = "telefone comercial deve ter no máximo 14 caracteres")
+    @Column(name = "CON_TELEFONE_COMERCIAL", length = 17)
     private String conTelefoneComercial;
 
     @NotBlank(message = "email é obrigatório")

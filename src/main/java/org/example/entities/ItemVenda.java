@@ -1,45 +1,38 @@
 package org.example.entities;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 public class ItemVenda {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long compraId;
 
-    @ManyToOne
-    @JoinColumn(name = "venda_id")
-    private Venda venda;
-
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "produto_id")
     private Produto produto;
 
-    private Integer quantidade;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "venda_id")
+    private Venda venda;
 
-    private Double precoUnitario;
+    @Column(nullable = false)
+    private Integer compraQuantidade;
 
-    private Double subtotal;
+    @Column(nullable = false, precision = 12, scale = 2)
+    private BigDecimal compraPrecoVenda;
 
     public ItemVenda() {
     }
 
-    public Long getId() {
-        return id;
+    public Long getCompraId() {
+        return compraId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Venda getVenda() {
-        return venda;
-    }
-
-    public void setVenda(Venda venda) {
-        this.venda = venda;
+    public void setCompraId(Long compraId) {
+        this.compraId = compraId;
     }
 
     public Produto getProduto() {
@@ -50,27 +43,27 @@ public class ItemVenda {
         this.produto = produto;
     }
 
-    public Integer getQuantidade() {
-        return quantidade;
+    public Venda getVenda() {
+        return venda;
     }
 
-    public void setQuantidade(Integer quantidade) {
-        this.quantidade = quantidade;
+    public void setVenda(Venda venda) {
+        this.venda = venda;
     }
 
-    public Double getPrecoUnitario() {
-        return precoUnitario;
+    public Integer getCompraQuantidade() {
+        return compraQuantidade;
     }
 
-    public void setPrecoUnitario(Double precoUnitario) {
-        this.precoUnitario = precoUnitario;
+    public void setCompraQuantidade(Integer compraQuantidade) {
+        this.compraQuantidade = compraQuantidade;
     }
 
-    public Double getSubtotal() {
-        return subtotal;
+    public BigDecimal getCompraPrecoVenda() {
+        return compraPrecoVenda;
     }
 
-    public void setSubtotal(Double subtotal) {
-        this.subtotal = subtotal;
+    public void setCompraPrecoVenda(BigDecimal compraPrecoVenda) {
+        this.compraPrecoVenda = compraPrecoVenda;
     }
 }

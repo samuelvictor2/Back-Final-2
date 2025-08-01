@@ -1,71 +1,80 @@
 package org.example.services;
 
+import org.example.dto.CompraDTO;
 import org.example.dto.VendaDTO;
-import org.example.entities.Cliente;
-import org.example.entities.ItemVenda;
-import org.example.entities.Produto;
-import org.example.entities.Venda;
-import org.example.repositories.ClienteRepository;
-import org.example.repositories.ProdutoRepository;
-import org.example.repositories.VendaRepository;
+import org.example.entities.*;
+import org.example.repositories.*;
 import org.example.services.exeptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class VendaService {
 
-    @Autowired private VendaRepository vendaRepo;
-    @Autowired private ClienteRepository clienteRepo;
-    @Autowired private ProdutoRepository produtoRepo;
+    @Autowired
+    private VendaRepository vendaRepo;
 
-    public Venda criarVenda(VendaDTO dto) {
-        Cliente cliente = clienteRepo.findById(dto.getClienteId())
+    @Autowired
+    private ProdutoRepository produtoRepo;
+
+    @Autowired
+    private ClienteRepository clienteRepo;
+
+    @Autowired
+    private FormaPagamentoRepository formaPagamentoRepo;
+
+    public Venda insert(VendaDTO dto) {
+        Cliente cliente = clienteRepo.findById(dto.getCliId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
+
+        FormaPagamento formaPagamento = formaPagamentoRepo.findById(dto.getFpgId())
+                .orElseThrow(() -> new ResourceNotFoundException("Forma de pagamento não encontrada"));
 
         Venda venda = new Venda();
         venda.setCliente(cliente);
-        venda.setData(LocalDate.now());
+        venda.setFormaPagamento(formaPagamento);
+        venda.setVendaData(LocalDateTime.now());
+        venda.setVendaCodigo(generateCodigoUnico());
 
-        List<ItemVenda> itens = new ArrayList<>();
-        double total = 0;
+        List<ItemVenda> compras = new ArrayList<>();
+        BigDecimal total = BigDecimal.ZERO;
 
-        for (VendaDTO.ItemVendaDTO itemDto : dto.getItens()) {
-            Produto produto = produtoRepo.findById(itemDto.getProdutoId())
+        for (CompraDTO item : dto.getCompras()) {
+            Produto produto = produtoRepo.findById(item.getProId())
                     .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
 
-            double preco = produto.getProPrecoVenda(); // Supondo que Produto tenha getPreco()
-            int qtd = itemDto.getQuantidade();
-            double subtotal = preco * qtd;
+            BigDecimal subtotal = item.getCompraPrecoVenda()
+                    .multiply(BigDecimal.valueOf(item.getCompraQuantidade()));
+            total = total.add(subtotal);
 
-            ItemVenda item = new ItemVenda();
-            item.setProduto(produto);
-            item.setQuantidade(qtd);
-            item.setPrecoUnitario(preco);
-            item.setSubtotal(subtotal);
-            item.setVenda(venda);
+            ItemVenda compra = new ItemVenda(); // ✅ Nome correto da entidade
+            compra.setProduto(produto);
+            compra.setCompraQuantidade(item.getCompraQuantidade());
+            compra.setCompraPrecoVenda(item.getCompraPrecoVenda());
+            compra.setVenda(venda);
 
-            itens.add(item);
-            total += subtotal;
+            compras.add(compra);
         }
 
-        venda.setItens(itens);
-        venda.setValorTotal(total);
+        venda.setItens(compras);
+        venda.setVendaValorTotal(total);
+
 
         return vendaRepo.save(venda);
     }
 
-    public List<Venda> listarTodas() {
-        return vendaRepo.findAll();
+    public VendaDTO toDTO(Venda venda) {
+        // Aqui você pode montar a conversão de entidade para DTO, se quiser posso te ajudar com isso
+        return new VendaDTO(); // Placeholder
     }
 
-    public Venda buscarPorId(Long id) {
-        return vendaRepo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Venda não encontrada"));
+    private String generateCodigoUnico() {
+        // Gera código no formato VXXXXX
+        return "V" + (int)(Math.random() * 90000 + 10000);
     }
-
 }

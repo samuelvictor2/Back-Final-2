@@ -7,7 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import javax.validation.Valid;
+import java.net.URI;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -18,18 +19,9 @@ public class VendaResource {
     private VendaService vendaService;
 
     @PostMapping
-    public ResponseEntity<Venda> criarVenda(@RequestBody VendaDTO dto) {
-        Venda novaVenda = vendaService.criarVenda(dto);
-        return ResponseEntity.ok(novaVenda);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<Venda>> listarVendas() {
-        return ResponseEntity.ok(vendaService.listarTodas());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Venda> buscarPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(vendaService.buscarPorId(id));
+    public ResponseEntity<VendaDTO> insert(@Valid @RequestBody VendaDTO dto) {
+        Venda novaVenda = vendaService.insert(dto);
+        VendaDTO responseDto = vendaService.toDTO(novaVenda);
+        return ResponseEntity.created(URI.create("/vendas/" + novaVenda.getVendaId())).body(responseDto);
     }
 }

@@ -3,6 +3,7 @@ package org.example.entities;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,67 +14,74 @@ public class Produto implements Serializable {
     @Column(name = "PRO_ID")
     private Long proId;
 
-    @NotBlank(message = "Nome é obrigatório")
-    @Size(max = 100, message = "Nome deve ter no máximo 100 caracteres")
+    @NotBlank
+    @Size(max = 100)
     @Column(name = "PRO_NOME")
     private String proNome;
 
-    @NotNull(message = "Preço de custo é obrigatório")
-    @DecimalMin(value = "0.00", inclusive = true, message = "Preço de custo não pode ser negativo")
-    @Digits(integer = 8, fraction = 2, message = "Preço de custo inválido")
+    @Size(max = 255)
+    @Column(name = "PRO_DESCRICAO")
+    private String proDescricao;
+
+    @NotNull
+    @DecimalMin("0.00")
+    @Digits(integer = 8, fraction = 2)
     @Column(name = "PRO_PRECO_CUSTO", precision = 10, scale = 2)
-    private Double proPrecoCusto;
+    private BigDecimal proPrecoCusto;
 
-    @NotNull(message = "Preço de venda é obrigatório")
-    @DecimalMin(value = "0.00", inclusive = true, message = "Preço de venda não pode ser negativo")
-    @Digits(integer = 8, fraction = 2, message = "Preço de venda inválido")
+    @NotNull
+    @DecimalMin("0.00")
+    @Digits(integer = 8, fraction = 2)
     @Column(name = "PRO_PRECO_VENDA", precision = 10, scale = 2)
-    private Double proPrecoVenda;
+    private BigDecimal proPrecoVenda;
 
-    @NotNull(message = "Quantidade em estoque é obrigatória")
-    @Min(value = 0, message = "Quantidade em estoque não pode ser negativa")
+    @NotNull
+    @Min(0)
     @Column(name = "PRO_QUANTIDADE_ESTOQUE")
     private Integer proQuantidadeEstoque;
 
-    @NotBlank(message = "Categoria é obrigatória")
-    @Size(max = 50, message = "Categoria deve ter no máximo 50 caracteres")
+    @NotBlank
+    @Size(max = 50)
     @Column(name = "PRO_CATEGORIA")
     private String proCategoria;
 
-    @NotBlank(message = "Código de barras é obrigatório")
-    @Size(max = 20, message = "Código de barras deve ter no máximo 20 caracteres")
+    @NotBlank
+    @Size(max = 20)
     @Column(name = "PRO_CODIGO_DE_BARRAS")
     private String proCodigoDeBarras;
 
-    @NotBlank(message = "Marca é obrigatória")
-    @Size(max = 50, message = "Marca deve ter no máximo 50 caracteres")
+    @NotBlank
+    @Size(max = 50)
     @Column(name = "PRO_MARCA")
     private String proMarca;
 
-    @NotBlank(message = "Unidade de medida é obrigatória")
-    @Size(max = 10, message = "Unidade de medida deve ter no máximo 10 caracteres")
+    @NotBlank
+    @Size(max = 10)
     @Column(name = "PRO_UNIDADE_MEDIDA")
     private String proUnidadeMedida;
 
-    @NotBlank(message = "Status de ativo é obrigatório")
+    @NotNull
     @Column(name = "PRO_ATIVO")
-    private String proAtivo;
+    private Boolean proAtivo;
 
-    @NotNull(message = "Data de cadastro é obrigatória")
+    @NotNull
     @Column(name = "PRO_DATA_CADASTRO")
     private LocalDateTime proDataCadastro;
 
-    @NotNull(message = "Data de atualização é obrigatória")
+    @NotNull
     @Column(name = "PRO_DATA_ATUALIZACAO")
     private LocalDateTime proDataAtualizacao;
 
+    // Construtor vazio (JPA)
     public Produto() {}
 
-    public Produto(Long proId, String proNome, Double proPrecoCusto, Double proPrecoVenda, Integer proQuantidadeEstoque,
-                   String proCategoria, String proCodigoDeBarras, String proMarca, String proUnidadeMedida, String proAtivo,
-                   LocalDateTime proDataCadastro, LocalDateTime proDataAtualizacao) {
+    // Construtor completo (útil em testes ou serviços)
+    public Produto(Long proId, String proNome, String proDescricao, BigDecimal proPrecoCusto, BigDecimal proPrecoVenda,
+                   Integer proQuantidadeEstoque, String proCategoria, String proCodigoDeBarras, String proMarca,
+                   String proUnidadeMedida, Boolean proAtivo, LocalDateTime proDataCadastro, LocalDateTime proDataAtualizacao) {
         this.proId = proId;
         this.proNome = proNome;
+        this.proDescricao = proDescricao;
         this.proPrecoCusto = proPrecoCusto;
         this.proPrecoVenda = proPrecoVenda;
         this.proQuantidadeEstoque = proQuantidadeEstoque;
@@ -102,19 +110,27 @@ public class Produto implements Serializable {
         this.proNome = proNome;
     }
 
-    public Double getProPrecoCusto() {
+    public String getProDescricao() {
+        return proDescricao;
+    }
+
+    public void setProDescricao(String proDescricao) {
+        this.proDescricao = proDescricao;
+    }
+
+    public BigDecimal getProPrecoCusto() {
         return proPrecoCusto;
     }
 
-    public void setProPrecoCusto(Double proPrecoCusto) {
+    public void setProPrecoCusto(BigDecimal proPrecoCusto) {
         this.proPrecoCusto = proPrecoCusto;
     }
 
-    public Double getProPrecoVenda() {
+    public BigDecimal getProPrecoVenda() {
         return proPrecoVenda;
     }
 
-    public void setProPrecoVenda(Double proPrecoVenda) {
+    public void setProPrecoVenda(BigDecimal proPrecoVenda) {
         this.proPrecoVenda = proPrecoVenda;
     }
 
@@ -158,11 +174,11 @@ public class Produto implements Serializable {
         this.proUnidadeMedida = proUnidadeMedida;
     }
 
-    public String getProAtivo() {
+    public Boolean getProAtivo() {
         return proAtivo;
     }
 
-    public void setProAtivo(String proAtivo) {
+    public void setProAtivo(Boolean proAtivo) {
         this.proAtivo = proAtivo;
     }
 
@@ -182,3 +198,4 @@ public class Produto implements Serializable {
         this.proDataAtualizacao = proDataAtualizacao;
     }
 }
+
