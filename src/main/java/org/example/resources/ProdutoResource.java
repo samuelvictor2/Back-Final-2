@@ -3,55 +3,51 @@ package org.example.resources;
 import org.example.entities.Produto;
 import org.example.services.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
-@RequestMapping(value = "/produtos")
+@RequestMapping("/api/produtos")
 public class ProdutoResource {
-
 
     @Autowired
     private ProdutoService produtoService;
 
-    @GetMapping
-    public ResponseEntity<List<Produto>> getAll() {
-        List<Produto> funcoes = produtoService.getAll();
-        return ResponseEntity.ok(funcoes);
-    }
-
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Produto> findById(@PathVariable Long id) {
-        Produto obj = produtoService.findById(id);
-        return ResponseEntity.ok().body(obj);
-    }
-
+    // Criar Produto
     @PostMapping
-    public ResponseEntity<Produto> insert(@RequestBody Produto produto) {
-        Produto createdProduto = produtoService.insert(produto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdProduto);
+    public ResponseEntity<Produto> createProduto(@Valid @RequestBody Produto produto) {
+        Produto createdProduto = produtoService.createProduto(produto);
+        return ResponseEntity.ok(createdProduto);
     }
 
+    // Ler (buscar) todos os produtos
+    @GetMapping
+    public ResponseEntity<List<Produto>> getAllProdutos() {
+        List<Produto> produtos = produtoService.getAllProdutos();
+        return ResponseEntity.ok(produtos);
+    }
+
+    // Ler (buscar) um produto por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Produto> getProdutoById(@PathVariable Long id) {
+        Produto produto = produtoService.getProdutoById(id);
+        return produto != null ? ResponseEntity.ok(produto) : ResponseEntity.notFound().build();
+    }
+
+    // Atualizar Produto
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Produto produto) {
-        if (produtoService.update(id, produto)) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Produto> updateProduto(@PathVariable Long id, @Valid @RequestBody Produto produto) {
+        Produto updatedProduto = produtoService.updateProduto(id, produto);
+        return updatedProduto != null ? ResponseEntity.ok(updatedProduto) : ResponseEntity.notFound().build();
     }
 
+    // Deletar Produto
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        produtoService.delete(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> deleteProduto(@PathVariable Long id) {
+        boolean isDeleted = produtoService.deleteProduto(id);
+        return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
-
 }

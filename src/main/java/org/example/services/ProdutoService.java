@@ -2,10 +2,7 @@ package org.example.services;
 
 import org.example.entities.Produto;
 import org.example.repositories.ProdutoRepository;
-import org.example.services.exeptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,43 +12,52 @@ import java.util.Optional;
 public class ProdutoService {
 
     @Autowired
-    private ProdutoRepository repository;
+    private ProdutoRepository produtoRepository;
 
-    public List<Produto> getAll() {
-        return repository.findAll();
+    // Criar Produto
+    public Produto createProduto(Produto produto) {
+        return produtoRepository.save(produto);
     }
 
-    public Produto findById(Long id) {
-        Optional<Produto> obj = repository.findById(id);
-        return obj.orElseThrow(() -> new ResourceNotFoundException(id));
+    // Buscar todos os produtos
+    public List<Produto> getAllProdutos() {
+        return produtoRepository.findAll();
     }
 
-    public Produto insert(Produto produto) {
-        return repository.save(produto);
+    // Buscar Produto por ID
+    public Produto getProdutoById(Long id) {
+        Optional<Produto> produto = produtoRepository.findById(id);
+        return produto.orElse(null);
     }
 
-    public boolean update(Long id, Produto produto) {
-        Optional<Produto> optionalProduto = repository.findById(id);
-        if (optionalProduto.isPresent()) {
-            Produto produtoSistema = optionalProduto.get();
-            produtoSistema.setProNome(produto.getProNome());
-            produtoSistema.setProPrecoCusto(produto.getProPrecoCusto());
-            produtoSistema.setProPrecoVenda(produto.getProPrecoVenda());
-            produtoSistema.setProQuantidadeEstoque(produto.getProQuantidadeEstoque());
-            produtoSistema.setProCategoria(produto.getProCategoria());
-            produtoSistema.setProCodigoDeBarras(produto.getProCodigoDeBarras());
-            produtoSistema.setProMarca(produto.getProMarca());
-            produtoSistema.setProUnidadeMedida(produto.getProUnidadeMedida());
-            produtoSistema.setProAtivo(produto.getProAtivo());
-            produtoSistema.setProDataCadastro(produto.getProDataCadastro());
-            produtoSistema.setProDataAtualizacao(produto.getProDataAtualizacao());
-            repository.save(produtoSistema);
+    // Atualizar Produto
+    public Produto updateProduto(Long id, Produto produto) {
+        Optional<Produto> existingProduto = produtoRepository.findById(id);
+        if (existingProduto.isPresent()) {
+            Produto updatedProduto = existingProduto.get();
+            updatedProduto.setProNome(produto.getProNome());
+            updatedProduto.setProDescricao(produto.getProDescricao());
+            updatedProduto.setProPrecoCusto(produto.getProPrecoCusto());
+            updatedProduto.setProPrecoVenda(produto.getProPrecoVenda());
+            updatedProduto.setProQuantidadeEstoque(produto.getProQuantidadeEstoque());
+            updatedProduto.setProCategoria(produto.getProCategoria());
+            updatedProduto.setProCodigoDeBarras(produto.getProCodigoDeBarras());
+            updatedProduto.setProMarca(produto.getProMarca());
+            updatedProduto.setProUnidadeMedida(produto.getProUnidadeMedida());
+            updatedProduto.setProAtivo(produto.getProAtivo());
+            updatedProduto.setProDataCadastro(produto.getProDataCadastro()); // Opcional: Pode deixar sem alteração
+            updatedProduto.setProDataAtualizacao(produto.getProDataAtualizacao()); // Atualiza a data
+            return produtoRepository.save(updatedProduto);
+        }
+        return null;
+    }
+
+    // Deletar Produto
+    public boolean deleteProduto(Long id) {
+        if (produtoRepository.existsById(id)) {
+            produtoRepository.deleteById(id);
             return true;
         }
         return false;
-    }
-
-    public void delete(Long id) {
-        repository.deleteById(id);
     }
 }

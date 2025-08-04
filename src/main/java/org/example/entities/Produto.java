@@ -72,27 +72,7 @@ public class Produto implements Serializable {
     @Column(name = "PRO_DATA_ATUALIZACAO")
     private LocalDateTime proDataAtualizacao;
 
-    // Construtor vazio (JPA)
     public Produto() {}
-
-    // Construtor completo (útil em testes ou serviços)
-    public Produto(Long proId, String proNome, String proDescricao, BigDecimal proPrecoCusto, BigDecimal proPrecoVenda,
-                   Integer proQuantidadeEstoque, String proCategoria, String proCodigoDeBarras, String proMarca,
-                   String proUnidadeMedida, Boolean proAtivo, LocalDateTime proDataCadastro, LocalDateTime proDataAtualizacao) {
-        this.proId = proId;
-        this.proNome = proNome;
-        this.proDescricao = proDescricao;
-        this.proPrecoCusto = proPrecoCusto;
-        this.proPrecoVenda = proPrecoVenda;
-        this.proQuantidadeEstoque = proQuantidadeEstoque;
-        this.proCategoria = proCategoria;
-        this.proCodigoDeBarras = proCodigoDeBarras;
-        this.proMarca = proMarca;
-        this.proUnidadeMedida = proUnidadeMedida;
-        this.proAtivo = proAtivo;
-        this.proDataCadastro = proDataCadastro;
-        this.proDataAtualizacao = proDataAtualizacao;
-    }
 
     public Long getProId() {
         return proId;
@@ -198,4 +178,3 @@ public class Produto implements Serializable {
         this.proDataAtualizacao = proDataAtualizacao;
     }
 }
-
