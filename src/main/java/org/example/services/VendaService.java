@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class VendaService {
@@ -77,4 +78,34 @@ public class VendaService {
         // Gera código no formato VXXXXX
         return "V" + (int)(Math.random() * 90000 + 10000);
     }
+    public BigDecimal calcularLucroTotal() {
+        List<Venda> vendas = vendaRepo.findAll();
+        BigDecimal lucroTotal = BigDecimal.ZERO;
+
+        for (Venda venda : vendas) {
+            for (ItemVenda item : venda.getItens()) {
+                BigDecimal precoVenda = item.getCompraPrecoVenda();
+                BigDecimal precoCusto = item.getProduto().getProPrecoCusto();
+                BigDecimal lucroItem = precoVenda.subtract(precoCusto)
+                        .multiply(BigDecimal.valueOf(item.getCompraQuantidade()));
+                lucroTotal = lucroTotal.add(lucroItem);
+            }
+        }
+
+        return lucroTotal;
+    }
+
+    public Long contarVendasNaSemana() {
+        LocalDateTime seteDiasAtras = LocalDateTime.now().minusDays(7);
+        return vendaRepo.countByVendaDataAfter(seteDiasAtras);
+    }
+
+    public List<VendaDTO> buscarPorCpf(String cpf) {
+        List<Venda> vendas = vendaRepo.findByClienteCliCpf(cpf);
+        return vendas.stream().map(this::toDTO).collect(Collectors.toList());
+
+    }
+
+
+
 }

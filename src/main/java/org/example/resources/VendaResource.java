@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -24,4 +25,10 @@ public class VendaResource {
         VendaDTO responseDto = vendaService.toDTO(novaVenda);
         return ResponseEntity.created(URI.create("/vendas/" + novaVenda.getVendaId())).body(responseDto);
     }
+    @GetMapping("/cpf/{cpf}")
+    public ResponseEntity<List<VendaDTO>> buscarPorCpf(@PathVariable String cpf) {
+        List<VendaDTO> vendas = vendaService.buscarPorCpf(cpf);
+        return ResponseEntity.ok(vendas);
+    }
+
 }
